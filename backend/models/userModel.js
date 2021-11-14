@@ -1,4 +1,4 @@
-import { compare } from 'bcryptjs'
+import bcrypt from 'bcryptjs'
 import mongoose from 'mongoose'
 
 const userSchema = mongoose.Schema(
@@ -27,7 +27,7 @@ const userSchema = mongoose.Schema(
   }
 )
 
-userSchema.methods.matchPassword = await function(enteredPassword) {
+userSchema.methods.matchPassword = async function(enteredPassword) {
   return await bcrypt.compare(enteredPassword, this.password)
 }
 
