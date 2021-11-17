@@ -18,7 +18,9 @@ const CartScreen = ({match, location, history}) => {
    const { cartItems } = cart
 
     useEffect(() => {
+      if(productId) { // if directly comes from click of cart button then there is no productid
         dispatch(addToCart(productId,qty))
+      }
     }, [dispatch,productId,qty])
 
     const removeFromCartHandler = (id) => {
