@@ -1,14 +1,12 @@
 import React, { useState, useEffect } from 'react'
-import { Link } from 'react-router-dom'
 import { Form, Button, Row, Col} from 'react-bootstrap'
 import { useDispatch, useSelector } from 'react-redux'
 import  Message  from '../components/Message'
 import Loader from '../components/Loader'
-import { register  } from '../actions/userActions'
-import FormContainer from '../components/FormContainer'
+import { getUserDetails,updateUserProfile } from '../actions/userActions'
 
 
-const RegisterScreen = ({ location, history }) => {
+const ProfileScreen = ({ history }) => {
    
     const [ name, setName ] = useState('')
     const [ email, setEmail ] = useState('')
@@ -18,36 +16,55 @@ const RegisterScreen = ({ location, history }) => {
 
     const dispatch = useDispatch()
 
-    const userRegister= useSelector(state=> state.userRegister)
+    const userDetails= useSelector(state=> state.userDetails)
+    const { loading, error, user } = userDetails
 
-    const { loading, error, userInfo } = userRegister
+    const userLogin = useSelector(state=> state.userLogin)
+    const { userInfo } = userLogin
 
-    const redirect = location.search ? location.search.split('=')[1] : '/'
+    const userUpdateProfile = useSelector(state=> state.userUpdateProfile)
+    const { success } = userUpdateProfile
 
     useEffect(() => {
-        if(userInfo) {
-            history.push(redirect)
+        if(!userInfo) {
+            history.push('/login')
         }
-    }, [ history, userInfo, redirect ])
+        else{
+            if(!user.name){
+                dispatch(getUserDetails('profile'))
+            }
+            else {
+                setName(user.name)
+                setEmail(user.email)
+            }
+        }
+    }, [ dispatch, history, userInfo, user])
 
-    const submitRegisterHandler = (e) => {
+    const submitProfileUpdateHandler = (e) => {
 
         e.preventDefault()
         setMessage(null)
         if(password !== confirmPassword){
             setMessage("Passwords do not match")
         }else{
-            dispatch(register(name,email,password))
+           dispatch(updateUserProfile({
+               id:user._id,
+               name,
+               email,
+               password
+           }))
         }
     }
 
     return (
-        <FormContainer>
-            <h1> Sign up </h1>
-            { message && <Message variant="danger">{message}</Message>}
+        <Row>
+            <Col md={3} >
+            <h3> User Profile </h3>
+            { message && <Message>{message}</Message>}
             { error && <Message variant="danger">{error}</Message>}
-            { loading && <Loader />}
-            <Form onSubmit={submitRegisterHandler}>
+            { success && <Message variant="success">Profile updated successfully</Message>}
+            { loading && <Loader /> }
+            <Form onSubmit={submitProfileUpdateHandler}>
             <Form.Group controlId="name">
                     <Form.Label> Name </Form.Label>
                         <Form.Control  type="text"
@@ -85,17 +102,15 @@ const RegisterScreen = ({ location, history }) => {
                     </Form.Group>
 
                     <Button type="submit" variant="primary" className="my-2">
-                        Register
+                        Update
                     </Button>
             </Form>
-            <Row className='py-3'>
-                <Col>
-                    Have an account?
-                    <Link to={redirect ?`/login?redirect=${redirect}`:'/login'}> Login </Link>
-                </Col>
-            </Row>
-        </FormContainer>
+            </Col>
+            <Col md={8} >
+                <h2>My Orders</h2>
+            </Col>
+        </Row>       
     )
 }
 
-export default RegisterScreen
+export default ProfileScreen
