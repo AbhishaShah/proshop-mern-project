@@ -6,6 +6,7 @@ import connectDB from "./config/db.js"  // for js file need to add .js extension
 
 import productRoutes from "./routes/productRoutes.js"
 import userRoutes from "./routes/userRoutes.js"
+import orderRoutes from './routes/orderRoutes.js'
 
 dotenv.config()
 
@@ -22,6 +23,7 @@ app.get('/',function(req,res){
 
 app.use('/api/products',productRoutes)
 app.use('/api/users',userRoutes)
+app.use('/api/orders',orderRoutes)
 
 
 app.use(notFound)
