@@ -4,6 +4,6 @@ import { addOrderItems, getOrderByID} from '../controllers/OrderControllers.js'
 import { protect } from '../middleware/authMiddleware.js'
 
 router.route('/').post(protect, addOrderItems)
-router.route('/:id').post(protect, getOrderByID)
+router.route('/:id').get(protect, getOrderByID)
 
 export default router   
